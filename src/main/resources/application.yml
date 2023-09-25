@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: payments-scheduler
+  jpa:
+    generate-ddl: false
+    show-sql: true
+  datasource:
+    scheduler:
+      driver-class-name: org.postgresql.Driver
+      password: tink
+      url: jdbc:postgresql://localhost:5432/payments_transfers?currentSchema=scheduler
+      username: tink
+      hikari:
+        maximum-pool-size: 5
+        pool-name: "writer-pool"
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+    properties:
+      org:
+        quartz:
+          threadPool:
+            threadCount: 20
+          scheduler:
+            batchTriggerAcquisitionMaxCount: 20
+            batchTriggerAcquisitionFireAheadTimeWindow: 10000
+          jobStore:
+            isClustered: true
+            dataSource: scheduler
+            acquireTriggersWithinLock: true
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "prometheus"
+          - "health"
+          - "info"
+          - "quartz"
+  metrics:
+    export:
+      prometheus:
+        enabled: true

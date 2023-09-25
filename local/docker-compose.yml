@@ -1,0 +1,12 @@
+version: '3.5'
+services:
+  scheduler:
+    image: schedulerapp
+    container_name: scheduler
+    ports: [ "8080:8080" ]
+
+  database-psql:
+    image: library/postgres:13.3
+    container_name: transfers-database
+    env_file: [ env/database.env ]
+    ports: [ "5432:5432" ]
